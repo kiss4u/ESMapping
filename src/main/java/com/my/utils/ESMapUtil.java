@@ -54,35 +54,12 @@ public class ESMapUtil {
             // 获得注解的对象
             ESMap mapInfo = field.getAnnotation(ESMap.class);
             if (mapInfo != null) {
+                //
                 if (mapInfo.ignore()) {
                     properties.remove(field.getName());
                     continue;
                 }
-                if (StringUtils.isNotBlank(type)) {
-                    para.put("type", type);
-                }
-                if (StringUtils.isNotBlank(mapInfo.type())) {
-                    para.put("type", mapInfo.type());
-                }
-                if (StringUtils.isNotBlank(mapInfo.analyzer())) {
-                    para.put("analyzer", mapInfo.analyzer());
-                }
-                if (StringUtils.isNotBlank(mapInfo.analyzer())) {
-                    para.put("search_analyzer", mapInfo.analyzerSearch());
-                }
-                // text类型写入索引最大长度
-                if (para.get("type").equals("text")) {
-                    Map<String, Object> strField = new HashMap<String, Object>();
-                    Map<String, Object> keyWord = new HashMap<String, Object>();
-                    keyWord.put("ignore_above", mapInfo.ignoreAbove());
-                    keyWord.put("type", "keyword");
-                    strField.put("keyword", keyWord);
-                    para.put("fields", strField);
-                }
-                if (StringUtils.isNotBlank(mapInfo.dateFormat())) {
-                    para.put("type", "date");
-                    para.put("format", mapInfo.dateFormat());
-                }
+                doFormat(para, mapInfo);
                 properties.put(field.getName(), para);
             } else {
                 if (StringUtils.isBlank(type)) {
@@ -143,6 +120,175 @@ public class ESMapUtil {
             return "";
         }
     }
+
+    /**
+     * 执行解析
+     *
+     * @param para
+     * @param mapInfo
+     */
+    private static void doFormat(Map<String, Object> para, ESMap mapInfo) {
+        formatType(para, mapInfo);
+        formatIndex(para, mapInfo);
+        formatEnable(para, mapInfo);
+        formatAnalyzer(para, mapInfo);
+        formatSearchAnalyzer(para, mapInfo);
+        formatDate(para, mapInfo);
+        formatCopyTo(para, mapInfo);
+        formatdocValues(para, mapInfo);
+        formatBoost(para, mapInfo);
+        formatCoerce(para, mapInfo);
+        formatIgnoreMalformed(para, mapInfo);
+    }
+
+    /**
+     * es类型
+     *
+     * @param para
+     * @param mapInfo
+     */
+    private static void formatType(Map<String, Object> para, ESMap mapInfo) {
+        if (StringUtils.isNotBlank(mapInfo.type())) {
+            para.put("type", mapInfo.type());
+            if (mapInfo.type().equals("text")) {
+                formatIgnoreAbove(para, mapInfo);
+            }
+        }
+    }
+
+    /**
+     * 分析类型及检索方式
+     *
+     * @param para
+     * @param mapInfo
+     */
+    private static void formatIndex(Map<String, Object> para, ESMap mapInfo) {
+        if (StringUtils.isNotBlank(mapInfo.index())) {
+            para.put("index", mapInfo.index());
+        }
+    }
+
+    /**
+     * 设置分词器类型
+     *
+     * @param para
+     * @param mapInfo
+     */
+    private static void formatAnalyzer(Map<String, Object> para, ESMap mapInfo) {
+        if (StringUtils.isNotBlank(mapInfo.analyzer())) {
+            para.put("analyzer", mapInfo.analyzer());
+        }
+    }
+
+    /**
+     * 设置搜索分词器类型
+     *
+     * @param para
+     * @param mapInfo
+     */
+    private static void formatSearchAnalyzer(Map<String, Object> para, ESMap mapInfo) {
+        if (StringUtils.isNotBlank(mapInfo.analyzer())) {
+            para.put("search_analyzer", mapInfo.analyzerSearch());
+        }
+    }
+
+    /**
+     * text类型写入索引最大长度
+     *
+     * @param para
+     * @param mapInfo
+     */
+    private static void formatIgnoreAbove(Map<String, Object> para, ESMap mapInfo) {
+        if (mapInfo.ignoreAbove() > 256) {
+            para.put("ignore_above", mapInfo.ignoreAbove());
+        }
+    }
+
+    /**
+     * 日期类型格式化
+     *
+     * @param para
+     * @param mapInfo
+     */
+    private static void formatDate(Map<String, Object> para, ESMap mapInfo) {
+        if (StringUtils.isNotBlank(mapInfo.dateFormat())) {
+            para.put("type", "date");
+            para.put("format", mapInfo.dateFormat());
+        }
+    }
+
+    /**
+     * 参数合并输出
+     *
+     * @param para
+     * @param mapInfo
+     */
+    private static void formatCopyTo(Map<String, Object> para, ESMap mapInfo) {
+        if (StringUtils.isNotBlank(mapInfo.copyTo())) {
+            para.put("copy_to", mapInfo.copyTo());
+        }
+    }
+
+    /**
+     * 关闭列式存储
+     *
+     * @param para
+     * @param mapInfo
+     */
+    private static void formatdocValues(Map<String, Object> para, ESMap mapInfo) {
+        if (!mapInfo.docValues()) {
+            para.put("doc_values", false);
+        }
+    }
+
+    /**
+     * 设置不索引
+     *
+     * @param para
+     * @param mapInfo
+     */
+    private static void formatEnable(Map<String, Object> para, ESMap mapInfo) {
+        if (!mapInfo.enable()) {
+            para.put("enable", false);
+        }
+    }
+
+    /**
+     * 不规则数据忽略
+     *
+     * @param para
+     * @param mapInfo
+     */
+    private static void formatIgnoreMalformed(Map<String, Object> para, ESMap mapInfo) {
+        if (mapInfo.ignoreMalformed()) {
+            para.put("ignore_malformed", true);
+        }
+    }
+
+    /**
+     * 权重
+     *
+     * @param para
+     * @param mapInfo
+     */
+    private static void formatBoost(Map<String, Object> para, ESMap mapInfo) {
+        if (mapInfo.boost() > 1) {
+            para.put("boost", mapInfo.boost());
+        }
+    }
+
+    /**
+     * 关闭脏数据清洗
+     *
+     * @param para
+     * @param mapInfo
+     */
+    private static void formatCoerce(Map<String, Object> para, ESMap mapInfo) {
+        if (!mapInfo.coerce()) {
+            para.put("coerce", false);
+        }
+    }
+
 
     public static void main(String[] args) {
         logger.info(JSON.toJSONString(analyzeESMapping(DynamicInfo.class)));
