@@ -24,7 +24,7 @@
 
 | 参数 | 类型 | 默认值 | 备注 | 
 | :----- | :----- | :------| :------ |
-| ignore | boolean  |  你们 |是否忽略 | 
+| ignore | boolean  | false |是否忽略 | 
 | type | String  | | ES类型  | 
 | index | String  | | 分析类型及检索方式  | 
 | analyzer | String |  | 分词器 |  
