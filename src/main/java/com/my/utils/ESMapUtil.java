@@ -59,6 +59,7 @@ public class ESMapUtil {
                     properties.remove(field.getName());
                     continue;
                 }
+				para.put("type", type);
                 doFormat(para, mapInfo);
                 properties.put(field.getName(), para);
             } else {

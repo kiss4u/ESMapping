@@ -9,29 +9,74 @@ import com.my.utils.ESMap;
  */
 public class DynamicInfo {
 
+    /**
+     * 动态id
+     */
     @ESMap(type = "keyword")
     private String dynamicId;
-
+    /**
+     * 用户id
+     */
     private Long userId;
-
+    /**
+     * 动态类型
+     */
+    @ESMap(ignoreMalformed = true)
     private Integer dyType = 0;
-
+    /**
+     * 资源类型
+     */
     private Integer fileType = 0;
-
+    /**
+     * 资源路径
+     */
+    @ESMap(type = "keyword")
     private String filePath = null;
-
-    @ESMap(type = "text", ignoreAbove = 400)
+    /**
+     * 动态文本
+     */
+    @ESMap(type = "text")
     private String content = null;
-
+    /**
+     * 创建时间
+     */
     @ESMap(dateFormat = "epoch_millis")
     private Long createTime;
-
+    /**
+     * 推荐度
+     */
+    @ESMap(ignoreMalformed = true)
     private Integer recommendNum = 0;
-
+    /**
+     * 点赞数
+     */
+    @ESMap(ignoreMalformed = true)
     private Integer likeNum = 0;
+    /**
+     * 阅读数
+     */
+    private Integer readNum = 0;
+    /**
+     * 话题id
+     */
+    @ESMap(ignoreMalformed = true)
+    private Integer topicId;
+    /**
+     * 话题名称
+     */
+    @ESMap(type = "keyword")
+    private String topicName;
+    /**
+     * 主题id
+     */
+    @ESMap(ignoreMalformed = true)
+    private Integer themeId;
 
-    @ESMap(ignore = true)
-    private String mark1;
+    /**
+     * 活动id
+     */
+    @ESMap(ignoreMalformed = true)
+    private Integer activityId;
 
     public DynamicInfo(String dynamicId, Long userId, Integer fileType, String filePath, String content) {
         this.dynamicId = dynamicId;
@@ -42,7 +87,6 @@ public class DynamicInfo {
         this.createTime = System.currentTimeMillis();
         this.likeNum = 100;
         this.recommendNum = 200;
-        this.mark1 = "22";
     }
 
     public String getDynamicId() {
@@ -93,7 +137,6 @@ public class DynamicInfo {
         this.content = content;
     }
 
-
     public Long getCreateTime() {
         return createTime;
     }
@@ -116,5 +159,45 @@ public class DynamicInfo {
 
     public void setLikeNum(Integer likeNum) {
         this.likeNum = likeNum;
+    }
+
+    public Integer getReadNum() {
+        return readNum;
+    }
+
+    public void setReadNum(Integer readNum) {
+        this.readNum = readNum;
+    }
+
+    public Integer getTopicId() {
+        return topicId;
+    }
+
+    public void setTopicId(Integer topicId) {
+        this.topicId = topicId;
+    }
+
+    public String getTopicName() {
+        return topicName;
+    }
+
+    public void setTopicName(String topicName) {
+        this.topicName = topicName;
+    }
+
+    public Integer getThemeId() {
+        return themeId;
+    }
+
+    public void setThemeId(Integer themeId) {
+        this.themeId = themeId;
+    }
+
+    public Integer getActivityId() {
+        return activityId;
+    }
+
+    public void setActivityId(Integer activityId) {
+        this.activityId = activityId;
     }
 }
